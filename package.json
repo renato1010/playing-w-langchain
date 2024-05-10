@@ -10,11 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "langchain": "^0.1.36"
+    "@aws-sdk/client-secrets-manager": "^3.572.0",
+    "langchain": "^0.1.36",
+    "valibot": "^0.30.0"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",
     "@types/node": "^20.12.11",
     "typescript": "^5.4.5"
-  }
+  },
+  "type": "module"
 }
