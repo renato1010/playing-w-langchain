@@ -1,0 +1,7 @@
+name: learning-langchain
+runtime: nodejs
+description: basic pulumi project
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-typescript
