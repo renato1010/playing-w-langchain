@@ -2,7 +2,6 @@ import { Pinecone } from '@pinecone-database/pinecone';
 import { Document } from '@langchain/core/documents';
 import { RecursiveCharacterTextSplitter, TextSplitter } from 'langchain/text_splitter';
 import { PineconeStore } from '@langchain/pinecone';
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { pineconeKey } from '@/env-vars.js';
 import { openAIEmbeddings } from './embeddings-utils.js';
 import { indexName as configuredName, timeout } from '@/utils/config.js';

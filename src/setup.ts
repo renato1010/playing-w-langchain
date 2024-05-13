@@ -1,9 +1,8 @@
 import { pineconeIndexDocs } from '@/utils/pinecone-utils.js';
 import { getDocsFromDirectory } from './utils/directory-loader.js';
 
-
 export async function setup() {
-  const docs = await getDocsFromDirectory();
+  const docs = await getDocsFromDirectory('../../documents');
 
   try {
     await pineconeIndexDocs(docs);

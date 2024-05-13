@@ -14,6 +14,9 @@ importers:
       '@langchain/core':
         specifier: ^0.1.62
         version: 0.1.62(openai@4.44.0(encoding@0.1.13))
+      '@langchain/openai':
+        specifier: ^0.0.28
+        version: 0.0.28(encoding@0.1.13)
       '@langchain/pinecone':
         specifier: ^0.0.4
         version: 0.0.4(openai@4.44.0(encoding@0.1.13))

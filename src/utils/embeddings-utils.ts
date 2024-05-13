@@ -1,4 +1,4 @@
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
+import { OpenAIEmbeddings } from '@langchain/openai';
 
 import { openaiKey } from '../env-vars.js';
 
