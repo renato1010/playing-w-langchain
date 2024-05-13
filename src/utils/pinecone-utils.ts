@@ -1,10 +1,13 @@
 import { Pinecone } from '@pinecone-database/pinecone';
-import { PineconeStore } from '@langchain/pinecone';
 import { Document } from '@langchain/core/documents';
+import { RecursiveCharacterTextSplitter, TextSplitter } from 'langchain/text_splitter';
+import { PineconeStore } from '@langchain/pinecone';
+import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { pineconeKey } from '@/env-vars.js';
+import { openAIEmbeddings } from './embeddings-utils.js';
 import { indexName as configuredName, timeout } from '@/utils/config.js';
 
-export const piconeClient = new Pinecone({ apiKey: pineconeKey });
+export const pineconeClient = new Pinecone({ apiKey: pineconeKey });
 
 export const createPineconeIndex = async (
   client: Pinecone,
@@ -36,67 +39,30 @@ export const createPineconeIndex = async (
   }
 };
 
-
 export const pineconeIndexDocs = async (
-  client: Pinecone,
-  docs: Document[],
-  indexName = configuredName,
+  docs: Document<Record<string, any>>[],
+  client: Pinecone = pineconeClient,
+  indexName = configuredName
 ) => {
   console.log('Retrieving Pinecone index...');
   // 1. Retrieve Pinecone index
-  const index = client.Index(indexName);
+  const pineconeIndex = client.Index(indexName);
   // 2. Log the retrieved index name
   console.log(`Pinecone index retrieved: ${indexName}`);
-  // 3. Process each document in the docs array
-  for (const doc of docs) {
-    console.log(`Processing document: ${doc.metadata.source}`);
-    const txtPath = doc.metadata.source;
-    const text = doc.pageContent;
-    // 4. Create RecursiveCharacterTextSplitter instance
-    const textSplitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1000
+  // 3. Create RecursiveCharacterTextSplitter instance
+  const textSplitter = new RecursiveCharacterTextSplitter({
+    chunkSize: 1000,
+    chunkOverlap: 200
+  });
+  try {
+    // 4. get splitted docs
+    const splittedDocs = await textSplitter.splitDocuments(docs);
+    // 5. embed docs and store in pinecone
+    const pineconeStore = await PineconeStore.fromDocuments(splittedDocs, openAIEmbeddings(), {
+      pineconeIndex,
+      maxConcurrency: 5
     });
-    console.log('Splitting text into chunks...');
-    // 5. Split text into chunks (documents)
-    const chunks = await textSplitter.createDocuments([text]);
-    console.log(`Text split into ${chunks.length} chunks`);
-    console.log(
-      `Calling OpenAI's Embedding endpoint documents with ${chunks.length} text chunks ...`
-    );
-    // 6. Create OpenAI embeddings for documents
-    const embeddingsArrays = await new OpenAIEmbeddings().embedDocuments(
-      chunks.map((chunk) => chunk.pageContent.replace(/\n/g, ' '))
-    );
-    console.log('Finished embedding documents');
-    console.log(`Creating ${chunks.length} vectors array with id, values, and metadata...`);
-    // 7. Create and upsert vectors in batches of 100
-    const batchSize = 100;
-    let batch: any = [];
-    for (let idx = 0; idx < chunks.length; idx++) {
-      const chunk = chunks[idx];
-      const vector = {
-        id: `${txtPath}_${idx}`,
-        values: embeddingsArrays[idx],
-        metadata: {
-          ...chunk.metadata,
-          loc: JSON.stringify(chunk.metadata.loc),
-          pageContent: chunk.pageContent,
-          txtPath: txtPath
-        }
-      };
-      batch = [...batch, vector];
-      // When batch is full or it's the last item, upsert the vectors
-      if (batch.length === batchSize || idx === chunks.length - 1) {
-        await index.upsert({
-          upsertRequest: {
-            vectors: batch
-          }
-        });
-        // Empty the batch
-        batch = [];
-      }
-    }
-    // 8. Log the number of vectors updated
-    console.log(`Pinecone index updated with ${chunks.length} vectors`);
+  } catch (error) {
+    throw new Error('Error indexing docs in pinecone');
   }
 };
