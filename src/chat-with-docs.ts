@@ -1,20 +1,16 @@
 import { Pinecone } from '@pinecone-database/pinecone';
 import { PineconeStore } from '@langchain/pinecone';
-import { ChatOpenAI } from '@langchain/openai';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { formatDocumentsAsString } from 'langchain/util/document';
 import { pineconeClient as pcClient } from './utils/pinecone-utils.js';
 import { indexName } from '@/utils/config.js';
 import { openAIEmbeddings } from './utils/embeddings-utils.js';
-import { openaiKey } from './env-vars.js';
+import {openAIChatModel} from "@/utils/openai-chat.js"
+
 
 async function askDocs(prompt: string, pineconeClient: Pinecone = pcClient) {
-  const openAIChatModel = new ChatOpenAI({
-    model: 'gpt-4-0125-preview',
-    temperature: 0,
-    apiKey: openaiKey
-  });
+
   const pineconeIndex = pineconeClient.Index(indexName);
   const vectorStore = await PineconeStore.fromExistingIndex(openAIEmbeddings(), { pineconeIndex });
   const vectorStoreRetriever = vectorStore.asRetriever();
