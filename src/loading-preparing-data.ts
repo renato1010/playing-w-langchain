@@ -19,13 +19,13 @@ const pdfLoader = new PDFLoader(pdfFilePath);
 const rawCS229Docs = await pdfLoader.load();
 // splitting
 const pdfSplitter = new RecursiveCharacterTextSplitter({
-  chunkSize: 512,
-  chunkOverlap: 64
+  chunkSize: 128,
+  chunkOverlap: 0
 });
 
-const splittedDocs = await pdfSplitter.splitDocuments(rawCS229Docs);
-console.log(
-  'PageContent1-2: ',
-  JSON.stringify(splittedDocs[0].pageContent, undefined, 2),
-  JSON.stringify(splittedDocs[1].pageContent, undefined, 2)
-);
+export const splittedDocs = await pdfSplitter.splitDocuments(rawCS229Docs);
+// console.log(
+//   'PageContent1-2: ',
+//   JSON.stringify(splittedDocs[0].pageContent, undefined, 2),
+//   JSON.stringify(splittedDocs[1].pageContent, undefined, 2)
+// );
