@@ -19,8 +19,8 @@ const pdfLoader = new PDFLoader(pdfFilePath);
 const rawCS229Docs = await pdfLoader.load();
 // splitting
 const pdfSplitter = new RecursiveCharacterTextSplitter({
-  chunkSize: 128,
-  chunkOverlap: 0
+  chunkSize: 1536,
+  chunkOverlap: 128
 });
 
 export const splittedDocs = await pdfSplitter.splitDocuments(rawCS229Docs);
