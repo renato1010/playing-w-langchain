@@ -6,11 +6,11 @@ import { StringOutputParser } from '@langchain/core/output_parsers';
 import { retriever } from './vectors-and-embeddings.js';
 import { openAIChatModel } from '@/utils/index.js';
 
-const convertDocsToString = (documents: Document[]): string => {
+export const convertDocsToString = (documents: Document[]): string => {
   return documents.map((doc) => `<doc>\n ${doc.pageContent}\n</doc>`).join('\n');
 };
 
-const pdfDocRetrievalChain = RunnableSequence.from([
+export const pdfDocRetrievalChain = RunnableSequence.from([
   (input) => input.question,
   retriever,
   convertDocsToString
@@ -21,7 +21,7 @@ const contextDocs = await pdfDocRetrievalChain.invoke({
 });
 
 // synthesizing a response
-const TEMPLATE_STRING = `You are an experienced researcher, 
+export const TEMPLATE_STRING = `You are an experienced researcher, 
 expert at interpreting and answering questions based on provided sources.
 Using the provided context, answer the user's question 
 to the best of your ability using only the resources provided. 
@@ -36,7 +36,7 @@ Be verbose!
 Now, answer this question using the above context:
 
 {question}`;
-const aswerGenerationPrompt = ChatPromptTemplate.fromTemplate(TEMPLATE_STRING);
+const answerGenerationPrompt = ChatPromptTemplate.fromTemplate(TEMPLATE_STRING);
 const runnableMap = RunnableMap.from({
   context: pdfDocRetrievalChain,
   question: (input: { question: string }) => input.question
@@ -47,9 +47,9 @@ const runnableMap = RunnableMap.from({
 // });
 
 // Augmented generation
-const retrievalChain = RunnableSequence.from([
+export const retrievalChain = RunnableSequence.from([
   { context: pdfDocRetrievalChain, question: (input: { question: string }) => input.question },
-  aswerGenerationPrompt,
+  answerGenerationPrompt,
   openAIChatModel,
   new StringOutputParser()
 ]);
@@ -64,7 +64,7 @@ const answerForUser = await retrievalChain.invoke({
 
 console.log({ answerForUser });
 
-const followupAnswer = await retrievalChain.invoke({
-  question: 'Can you list them in bullet point form?'
-});
-console.log({ followupAnswer });
+// const followupAnswer = await retrievalChain.invoke({
+//   question: 'Can you list them in bullet point form?'
+// });
+// console.log({ followupAnswer });
