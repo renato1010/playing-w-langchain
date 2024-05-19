@@ -1,7 +1,6 @@
-import { RunnableSequence } from 'langchain/runnables';
+import { RunnableSequence, RunnableMap } from '@langchain/core/runnables';
 import { Document } from '@langchain/core/documents';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { RunnableMap } from '@langchain/core/runnables';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { retriever } from './vectors-and-embeddings.js';
 import { openAIChatModel } from '@/utils/index.js';
@@ -16,7 +15,7 @@ export const pdfDocRetrievalChain = RunnableSequence.from([
   convertDocsToString
 ]);
 
-const contextDocs = await pdfDocRetrievalChain.invoke({
+export const contextDocs = await pdfDocRetrievalChain.invoke({
   question: 'What are the prerequisites for this course?'
 });
 
@@ -36,8 +35,8 @@ Be verbose!
 Now, answer this question using the above context:
 
 {question}`;
-const answerGenerationPrompt = ChatPromptTemplate.fromTemplate(TEMPLATE_STRING);
-const runnableMap = RunnableMap.from({
+export const answerGenerationPrompt = ChatPromptTemplate.fromTemplate(TEMPLATE_STRING);
+export const runnableMap = RunnableMap.from({
   context: pdfDocRetrievalChain,
   question: (input: { question: string }) => input.question
 });
@@ -62,7 +61,7 @@ const answerForUser = await retrievalChain.invoke({
 //   console.log(chunk);
 // }
 
-console.log({ answerForUser });
+// console.log({ answerForUser });
 
 // const followupAnswer = await retrievalChain.invoke({
 //   question: 'Can you list them in bullet point form?'

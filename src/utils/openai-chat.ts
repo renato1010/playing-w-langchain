@@ -1,16 +1,30 @@
+import { ChatOpenAI, OpenAI } from '@langchain/openai';
 import { openaiKey } from '@/env-vars.js';
-import { ChatOpenAI } from '@langchain/openai';
 
 export const openAIChatModel = new ChatOpenAI({
-  model: 'gpt-4-0125-preview',
+  model: 'gpt-4-turbo',
   temperature: 0,
-  apiKey: openaiKey
+  openAIApiKey: openaiKey
 });
 
-export const getOpenAIChatModel = (temperature = 0, model = 'gpt-4-0125-preview') => {
+export const openaiLLM = new OpenAI({
+  temperature: 0,
+  model: 'gpt-4-turbo',
+  openAIApiKey: openaiKey
+});
+
+export const getOpenAIChatModel = (temperature = 0, model = 'gpt-4-turbo') => {
   return new ChatOpenAI({
     model,
     temperature,
-    apiKey: openaiKey
+    openAIApiKey: openaiKey
+  });
+};
+
+export const getOpenAILLM = (temperature = 0, model = 'gpt-4-turbo') => {
+  return new OpenAI({
+    temperature,
+    model,
+    openAIApiKey: openaiKey
   });
 };
