@@ -11,8 +11,8 @@ import { formatDocumentsAsString } from 'langchain/util/document';
 import { AIMessage, BaseChatMessageHistory, BaseMessage } from 'langchain/schema';
 import { InMemoryChatMessageHistory } from '@langchain/core/chat_history';
 
-const chatModel = getOpenAIChatModel(0.4);
-const model = getOpenAILLM();
+const chatModel = getOpenAIChatModel({ temperature: 0.4 });
+const model = getOpenAILLM({});
 
 async function run() {
   // const prompt = await pull<ChatPromptTemplate>('rlm/rag-prompt');

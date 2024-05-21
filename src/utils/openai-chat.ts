@@ -1,5 +1,7 @@
 import { ChatOpenAI, OpenAI } from '@langchain/openai';
 import { openaiKey } from '@/env-vars.js';
+import { Callbacks } from '@langchain/core/callbacks/manager';
+import { string } from 'valibot';
 
 export const openAIChatModel = new ChatOpenAI({
   model: 'gpt-4-turbo',
@@ -13,18 +15,36 @@ export const openaiLLM = new OpenAI({
   openAIApiKey: openaiKey
 });
 
-export const getOpenAIChatModel = (temperature = 0, model = 'gpt-4-turbo') => {
+export const getOpenAIChatModel = ({
+  temperature = 0,
+  model = 'gpt-4-turbo',
+  callbacks
+}: {
+  temperature?: number;
+  model?: string;
+  callbacks?: Callbacks | undefined;
+}) => {
   return new ChatOpenAI({
     model,
     temperature,
-    openAIApiKey: openaiKey
+    openAIApiKey: openaiKey,
+    callbacks
   });
 };
 
-export const getOpenAILLM = (temperature = 0, model = 'gpt-4-turbo') => {
+export const getOpenAILLM = ({
+  temperature = 0,
+  model = 'gpt-4-turbo',
+  callbacks
+}: {
+  temperature?: number;
+  model?: string;
+  callbacks?: Callbacks | undefined;
+}) => {
   return new OpenAI({
     temperature,
     model,
-    openAIApiKey: openaiKey
+    openAIApiKey: openaiKey,
+    callbacks
   });
 };

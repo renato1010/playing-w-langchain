@@ -25,7 +25,7 @@ const rephraseQuestionChainPrompt = ChatPromptTemplate.fromMessages([
 
 const rephraseQuestionChain = RunnableSequence.from([
   rephraseQuestionChainPrompt,
-  getOpenAIChatModel(0.1),
+  getOpenAIChatModel({ temperature: 0.1 }),
   new StringOutputParser()
 ]);
 
@@ -65,7 +65,7 @@ const conversationalRetrievalChain = RunnableSequence.from([
     context: documentRetrievalChain
   }),
   answerGenerationChainPrompt,
-  getOpenAIChatModel(0.1),
+  getOpenAIChatModel({ temperature: 0.1 }),
   new StringOutputParser()
 ]);
 
